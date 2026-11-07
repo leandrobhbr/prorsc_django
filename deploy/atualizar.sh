@@ -47,7 +47,9 @@ como_app "cd '$DIR/backend' && .venv/bin/python manage.py migrate --noinput && .
 echo "==> Build do frontend (FRONT_PUBLIC_PATH e FRONT_API_URL do .env; padrão: raiz do domínio)"
 como_app "cd '$DIR/frontend' && npm ci --no-audit --no-fund && PUBLIC_PATH=\"\${FRONT_PUBLIC_PATH:-/}\" API_URL=\"\${FRONT_API_URL:-/api/v1}\" npx quasar build"
 install -d -m 755 "$WEB"
-rsync -a --delete "$DIR/frontend/dist/spa/" "$WEB/"
+# Arquivos públicos ficam com dono root: o usuário do serviço não consegue alterá-los.
+rsync -a --delete --chown=root:root "$DIR/frontend/dist/spa/" "$WEB/"
+chown root:root "$WEB"
 
 echo "==> Reiniciando o serviço"
 systemctl restart "$APP"

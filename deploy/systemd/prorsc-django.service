@@ -16,11 +16,38 @@ ExecReload=/bin/kill -s HUP $MAINPID
 Restart=on-failure
 RestartSec=5
 
+# ── Isolamento (confira com: systemd-analyze security prorsc-django) ──────────────
+# Disco somente leitura, exceto a pasta do banco; sem acesso a /home, /tmp alheio,
+# dispositivos, kernel ou chamadas de sistema privilegiadas.
 NoNewPrivileges=true
-PrivateTmp=true
 ProtectSystem=strict
-ProtectHome=true
 ReadWritePaths=/var/lib/prorsc-django
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+# Nem enxerga os outros sites do servidor (o front é copiado pelo atualizar.sh, como root),
+# a configuração do Apache nem os certificados.
+InaccessiblePaths=-/var/www -/etc/apache2 -/etc/letsencrypt -/etc/ssl/private -/root
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+ProtectProc=invisible
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+# Só rede IPv4/IPv6 e sockets locais; nenhuma capacidade de root.
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged
+SystemCallErrorNumber=EPERM
+UMask=0027
 
 [Install]
 WantedBy=multi-user.target
