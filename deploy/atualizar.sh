@@ -8,7 +8,9 @@ set -euo pipefail
 VERSAO="${1:?Informe a tag a publicar. Exemplo: sudo deploy/atualizar.sh v1.2.0}"
 APP=prorsc-django
 DIR=/opt/$APP
-WEB=/var/www/$APP
+# Pasta pública do frontend: FRONT_DIR no .env (padrão /var/www/<app>).
+WEB=$(sed -n 's/^FRONT_DIR=//p' "/etc/$APP.env" | tail -1)
+WEB=${WEB:-/var/www/$APP}
 DADOS=/var/lib/$APP
 ENV_FILE=/etc/$APP.env
 HEALTH=http://127.0.0.1:8003/api/v1/health
@@ -38,6 +40,7 @@ como_app "cd '$DIR/backend' && .venv/bin/python manage.py migrate --noinput && .
 
 echo "==> Build do frontend (FRONT_PUBLIC_PATH e FRONT_API_URL do .env; padrão: raiz do domínio)"
 como_app "cd '$DIR/frontend' && npm ci --no-audit --no-fund && PUBLIC_PATH=\"\${FRONT_PUBLIC_PATH:-/}\" API_URL=\"\${FRONT_API_URL:-/api/v1}\" npx quasar build"
+install -d -m 755 "$WEB"
 rsync -a --delete "$DIR/frontend/dist/spa/" "$WEB/"
 
 echo "==> Reiniciando o serviço"

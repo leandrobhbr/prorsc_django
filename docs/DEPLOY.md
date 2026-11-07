@@ -146,6 +146,8 @@ Para publicar em `https://exemplo.com.br/prorsc_django/`, num domínio que já t
 
 1. No `/etc/prorsc-django.env`, **antes do build do frontend** (seção 3):
    ```ini
+   # Opcional: publicar o front dentro da pasta do site (padrão: /var/www/prorsc-django)
+   FRONT_DIR=/var/www/html/exemplo/prorsc_django
    FRONT_PUBLIC_PATH=/prorsc_django/
    FRONT_API_URL=/prorsc_django/api/v1
    # Links e login do Django Admin com o prefixo:
@@ -159,6 +161,8 @@ Para publicar em `https://exemplo.com.br/prorsc_django/`, num domínio que já t
    sudo mkdir -p /etc/apache2/prorsc
    sudo cp /opt/prorsc-django/deploy/apache/prorsc-django-subpasta.conf /etc/apache2/prorsc/
    ```
+   Se mudou o `FRONT_DIR`, ajuste o caminho no arquivo copiado:
+   `sudo sed -i 's#/var/www/prorsc-django#/var/www/html/exemplo/prorsc_django#g' /etc/apache2/prorsc/prorsc-django-subpasta.conf`
 3. Dentro do `<VirtualHost *:443>` do domínio, adicione **uma vez** a linha:
    ```apache
    IncludeOptional /etc/apache2/prorsc/*.conf
