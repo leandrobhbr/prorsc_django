@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Configuração local e banco
+.env
+backend/data/
+backend/staticfiles/
+*.db
+*.db-shm
+*.db-wal
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.quasar/
+
+# Editor / sistema
+.vscode/
+.idea/
+.DS_Store

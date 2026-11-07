@@ -1,0 +1,26 @@
+# Serviço systemd da Calculadora RSC-TAE (Django + Gunicorn).
+# Instalação: sudo cp deploy/systemd/prorsc-django.service /etc/systemd/system/
+#             sudo systemctl daemon-reload && sudo systemctl enable --now prorsc-django
+[Unit]
+Description=Calculadora RSC-TAE - backend Django (Gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=prorsc
+Group=prorsc
+WorkingDirectory=/opt/prorsc-django/backend
+EnvironmentFile=/etc/prorsc-django.env
+ExecStart=/opt/prorsc-django/backend/.venv/bin/gunicorn --config gunicorn.conf.py config.wsgi
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/prorsc-django
+
+[Install]
+WantedBy=multi-user.target
