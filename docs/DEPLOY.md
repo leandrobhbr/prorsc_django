@@ -72,7 +72,8 @@ sudo install -d -o prorsc -g prorsc -m 750 /var/lib/prorsc-django
 ```bash
 sudo tee /etc/cron.daily/prorsc-django-backup > /dev/null <<'EOF'
 #!/bin/sh
-sqlite3 /var/lib/prorsc-django/prorsc.db ".backup '/var/lib/prorsc-django/backup-diario.db'"
+# Roda como o usuário do serviço, para não criar arquivos do banco com dono root.
+runuser -u prorsc -- sqlite3 /var/lib/prorsc-django/prorsc.db ".backup '/var/lib/prorsc-django/backup-diario.db'"
 EOF
 sudo chmod +x /etc/cron.daily/prorsc-django-backup
 ```
@@ -211,7 +212,7 @@ sudo /opt/prorsc-django/deploy/atualizar.sh v1.0.0
 ```
 
 Se a versão nova tinha migration que alterou tabelas, restaure antes o backup que o script
-mostrou (`cp backup-...db prorsc.db`) ou desfaça a migration com `manage.py migrate <app> <migration_anterior>`.
+mostrou (com o serviço parado: `sudo -u prorsc cp backup-...db prorsc.db` e apague `prorsc.db-wal`/`prorsc.db-shm`) ou desfaça a migration com `manage.py migrate <app> <migration_anterior>`.
 
 ## 7. Problemas comuns
 

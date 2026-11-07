@@ -31,9 +31,15 @@ echo "==> Dependências Python (versões travadas no uv.lock)"
 como_app "cd '$DIR/backend' && uv sync --frozen --no-dev"
 
 echo "==> Backup do banco antes das migrations"
-BACKUP="$DADOS/backup-$(date +%Y%m%d-%H%M%S)-antes-de-$VERSAO.db"
-sqlite3 "$DADOS/prorsc.db" ".backup '$BACKUP'"
-echo "    $BACKUP"
+BACKUP="$DADOS/backup-$(date +%Y%m%d-%H%M%S)-antes-de-${VERSAO//\//-}.db"   # "origin/master" → "origin-master"
+# Como o usuário do serviço: se o sqlite3 rodasse como root, os arquivos -wal/-shm criados
+# por ele ficariam com dono root e a aplicação não conseguiria mais gravar no banco.
+if [ -f "$DADOS/prorsc.db" ]; then
+    sudo -u prorsc sqlite3 "$DADOS/prorsc.db" ".backup '$BACKUP'"
+    echo "    $BACKUP"
+else
+    echo "    (banco ainda não existe; nada a copiar)"
+fi
 
 echo "==> Migrations e arquivos estáticos do Django Admin"
 como_app "cd '$DIR/backend' && .venv/bin/python manage.py migrate --noinput && .venv/bin/python manage.py collectstatic --noinput"
@@ -56,5 +62,5 @@ done
 
 echo "!! O serviço não respondeu em $HEALTH. Veja: journalctl -u $APP -n 50"
 echo "!! Para voltar: sudo $DIR/deploy/atualizar.sh $ANTERIOR"
-echo "!!   (se a migration alterou o banco, restaure antes: cp '$BACKUP' '$DADOS/prorsc.db')"
+echo "!!   (se a migration alterou o banco, restaure antes: systemctl stop $APP && sudo -u prorsc cp '$BACKUP' '$DADOS/prorsc.db' && rm -f '$DADOS'/prorsc.db-wal '$DADOS'/prorsc.db-shm)"
 exit 1
