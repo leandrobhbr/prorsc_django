@@ -5,13 +5,15 @@ Calculadora de pontuação do **Reconhecimento de Saberes e Competências (RSC)*
 atividades do catálogo oficial de saberes (Anexos I a VI) e vê na hora a pontuação e os níveis
 RSC atingidos.
 
+**Demonstração online:** https://leandrocampos.dev/prorsc/ — usuário `teste@teste.com.br`, senha `123456`.
+
 A mesma calculadora existe em três backends Python, com a mesma API e o mesmo frontend:
 
-| Implementação | Repositório |
-|---|---|
-| Flask | [prorsc_flask](https://github.com/leandrobhbr/prorsc_flask) |
-| FastAPI | [prorsc_fastapi](https://github.com/leandrobhbr/prorsc_fastapi) |
-| **Django** (este) | [prorsc_django](https://github.com/leandrobhbr/prorsc_django) |
+| Implementação | Repositório | Demo |
+|---|---|---|
+| Flask | [prorsc_flask](https://github.com/leandrobhbr/prorsc_flask) | [abrir](https://leandrocampos.dev/prorsc_flask/) |
+| FastAPI | [prorsc_fastapi](https://github.com/leandrobhbr/prorsc_fastapi) | [abrir](https://leandrocampos.dev/prorsc_fastapi/) |
+| **Django** (este) | [prorsc_django](https://github.com/leandrobhbr/prorsc_django) | [abrir](https://leandrocampos.dev/prorsc_django/) |
 
 Derivada do [ProRSC-TAE](https://github.com/leandrobhbr/pro-rsc-tae), sistema completo oferecido
 como Software Público Brasileiro.
