@@ -53,7 +53,8 @@ echo "==> Reiniciando o serviço"
 systemctl restart "$APP"
 
 for _ in $(seq 1 10); do
-    if curl -fsS "$HEALTH" > /dev/null; then
+    # Nas primeiras tentativas o Gunicorn ainda está subindo: erros silenciados.
+    if curl -fsS "$HEALTH" > /dev/null 2>&1; then
         echo "==> OK: $VERSAO publicada."
         exit 0
     fi
